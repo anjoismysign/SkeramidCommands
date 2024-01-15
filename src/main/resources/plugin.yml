@@ -1,0 +1,9 @@
+name: SkeramidCommands
+version: ${project.version}
+main: me.anjoismysign.skeramidcommands.SkeramidCommands
+api-version: 1.13
+authors: [ anjoismysign ]
+commands:
+  factions:
+    aliases: [ fac ]
+    description: Test command
