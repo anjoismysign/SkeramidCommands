@@ -5,23 +5,47 @@ import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public interface Command extends Skeramid<Command> {
+
+    /**
+     * Gets the parameters of the command.
+     *
+     * @return the parameters. null if the command has no parameters.
+     */
+    @NotNull
+    List<CommandTarget<?>> getParameters();
+
+    /**
+     * Sets the parameters of the command.
+     *
+     * @param targets the parameters.
+     */
+    void setParameters(CommandTarget<?>... targets);
+
+    /**
+     * Checks whether the command has parameters.
+     *
+     * @return true if the command has parameters, false otherwise.
+     */
+    default boolean hasParameters() {
+        return !getParameters().isEmpty();
+    }
 
     /**
      * Will be called when the command is executed.
      *
      * @param consumer the consumer.
      */
-    void onExecute(Consumer<PermissionMessenger> consumer);
+    void onExecute(BiConsumer<PermissionMessenger, String[]> consumer);
 
     /**
      * Will run logic with the given CommandSender since the sender is authorized.
      *
      * @param permissionMessenger the sender.
      */
-    boolean run(PermissionMessenger permissionMessenger);
+    boolean run(PermissionMessenger permissionMessenger, String... args);
 
     /**
      * Checks whether the sender is authorized to execute the command

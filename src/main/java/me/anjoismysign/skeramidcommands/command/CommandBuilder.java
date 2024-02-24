@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class CommandBuilder {
     @NotNull
@@ -16,7 +16,7 @@ public class CommandBuilder {
     @Nullable
     private List<String> alias;
     @Nullable
-    private Consumer<PermissionMessenger> onExecute;
+    private BiConsumer<PermissionMessenger, String[]> onExecute;
 
     private CommandBuilder(@NotNull String name) {
         this.name = name;
@@ -47,7 +47,7 @@ public class CommandBuilder {
         return this;
     }
 
-    public CommandBuilder onExecute(@Nullable Consumer<PermissionMessenger> onExecute) {
+    public CommandBuilder onExecute(@Nullable BiConsumer<PermissionMessenger, String[]> onExecute) {
         this.onExecute = onExecute;
         return this;
     }

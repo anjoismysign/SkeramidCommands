@@ -1,12 +1,14 @@
 package me.anjoismysign.skeramidcommands.command;
 
 import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class PyramidCommand implements Command {
@@ -17,8 +19,10 @@ public class PyramidCommand implements Command {
     private final List<String> alias;
     @NotNull
     private final List<FloorCommand> children;
+    @NotNull
+    private final List<CommandTarget<?>> parameters;
     @Nullable
-    private Consumer<PermissionMessenger> onExecute;
+    private BiConsumer<PermissionMessenger, String[]> onExecute;
 
     public PyramidCommand(@NotNull String name,
                           @NotNull String permission,
@@ -28,6 +32,7 @@ public class PyramidCommand implements Command {
         this.alias = alias;
         this.permission = permission;
         this.description = description;
+        this.parameters = new ArrayList<>();
         this.children = new ArrayList<>();
     }
 
@@ -41,22 +46,30 @@ public class PyramidCommand implements Command {
     public final List<String> tabComplete(PermissionMessenger permissionMessenger, List<String> args) {
         if (args.isEmpty())
             return null;
-        int length = args.size();
+        int size = args.size();
         List<String> dupe = new ArrayList<>(args);
         dupe.remove(dupe.size() - 1);
         String prefix = String.join(" ", dupe).toLowerCase();
         List<Command> children = getChildren()
                 .stream()
                 .filter(child -> child.getName().startsWith(prefix))
-                .filter(child -> child.getName().split(" ").length == length)
+                .filter(child -> child.getName().split(" ").length == size)
                 .filter(child -> child.isAuthorized(permissionMessenger))
                 .collect(Collectors.toList());
-        if (children.isEmpty())
-            return null;
-        return children
+        List<String> single = children
                 .stream()
-                .map(child -> child.getName().split(" ")[length - 1])
+                .map(child -> child.getName().split(" ")[size - 1])
                 .collect(Collectors.toList());
+        if (!single.isEmpty())
+            return single;
+        int argumentSize = dupe.size();
+        Command find = child(dupe.get(0));
+        if (!find.hasParameters() || find.getParameters().size() < argumentSize)
+            return new ArrayList<>();
+        CommandTarget<?> result = find.getParameters().get(argumentSize - 1);
+        if (result != null)
+            return result.get();
+        return new ArrayList<>();
     }
 
     public final boolean execute(PermissionMessenger permissionMessenger, List<String> args) {
@@ -68,7 +81,11 @@ public class PyramidCommand implements Command {
         Command argument = findChildren(String.join(" ", args).toLowerCase());
         if (argument == null)
             return false;
-        args.remove(0);
+        if (argument.hasParameters()) {
+            List<String> subList = args.subList(1, args.size());
+            String[] array = subList.toArray(new String[0]);
+            return argument.run(permissionMessenger, array);
+        }
         return argument.run(permissionMessenger);
     }
 
@@ -81,15 +98,24 @@ public class PyramidCommand implements Command {
         }
     }
 
-    public void onExecute(Consumer<PermissionMessenger> consumer) {
+    public void onExecute(BiConsumer<PermissionMessenger, String[]> consumer) {
         this.onExecute = consumer;
     }
 
-    public boolean run(PermissionMessenger permissionMessenger) {
+    public @NotNull List<CommandTarget<?>> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(CommandTarget<?>... targets) {
+        parameters.clear();
+        Collections.addAll(parameters, targets);
+    }
+
+    public boolean run(PermissionMessenger permissionMessenger, String... args) {
         if (!isAuthorized(permissionMessenger))
             return false;
         if (onExecute != null)
-            onExecute.accept(permissionMessenger);
+            onExecute.accept(permissionMessenger, args);
         return true;
     }
 
@@ -125,8 +151,13 @@ public class PyramidCommand implements Command {
      */
     @Nullable
     public Command findChildren(String name) {
-        return children.stream().filter(child -> child.getName().equals(name) ||
+        Command single = children.stream().filter(child -> child.getName().equals(name) ||
                 child.getAlias().contains(name)).findFirst().orElse(null);
+        if (single != null)
+            return single;
+        String first = name.split(" ")[0];
+        return children.stream().filter(child -> child.getName().equals(first) ||
+                child.getAlias().contains(first)).findFirst().orElse(null);
     }
 
     @NotNull
@@ -154,6 +185,8 @@ public class PyramidCommand implements Command {
         args.add(name);
         Command children = findChildren(name);
         if (children == null) {
+            if (hasParameters())
+                throw ChildNotAllowedException.of(this, name);
             FloorCommand floorCommand = new FloorCommand(args, this);
             this.children.add(floorCommand);
             return floorCommand;

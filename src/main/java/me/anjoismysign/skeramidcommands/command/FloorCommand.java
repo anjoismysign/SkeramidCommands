@@ -1,21 +1,29 @@
 package me.anjoismysign.skeramidcommands.command;
 
 import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class FloorCommand implements Command {
+    @NotNull
     private final List<String> args;
+    @NotNull
     private final PyramidCommand pyramid;
+    @NotNull
     private final String name, permission;
+    @NotNull
     private final List<String> alias;
+    @NotNull
+    private final List<CommandTarget<?>> parameters;
     @Nullable
-    private Consumer<PermissionMessenger> onExecute;
+    private BiConsumer<PermissionMessenger, String[]> onExecute;
 
     protected FloorCommand(List<String> args, PyramidCommand pyramid) {
         this(args, pyramid, new ArrayList<>());
@@ -26,6 +34,7 @@ public class FloorCommand implements Command {
         this.args = args;
         this.pyramid = pyramid;
         this.alias = alias;
+        this.parameters = new ArrayList<>();
         this.name = String.join(" ", args).toLowerCase();
         String parentPermission = pyramid.getPermission();
         this.permission = parentPermission.isEmpty() ? "" : (pyramid.getPermission() + "." + String
@@ -34,6 +43,8 @@ public class FloorCommand implements Command {
 
     @NotNull
     public Command child(String name) {
+        if (hasParameters())
+            throw ChildNotAllowedException.of(this, name);
         List<String> dupe = new ArrayList<>(args);
         dupe.add(name);
         FloorCommand command = new FloorCommand(dupe, pyramid);
@@ -41,17 +52,27 @@ public class FloorCommand implements Command {
         return command;
     }
 
-    @Override
-    public void onExecute(Consumer<PermissionMessenger> consumer) {
-        this.onExecute = consumer;
+    public @NotNull List<CommandTarget<?>> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(CommandTarget<?>... targets) {
+        parameters.clear();
+        Collections.addAll(parameters, targets);
     }
 
     @Override
-    public boolean run(PermissionMessenger permissionMessenger) {
+    public void onExecute(BiConsumer<PermissionMessenger, String[]> consumer) {
+        this.onExecute = consumer;
+
+    }
+
+    @Override
+    public boolean run(PermissionMessenger permissionMessenger, String... args) {
         if (!isAuthorized(permissionMessenger))
             return false;
         if (onExecute != null)
-            onExecute.accept(permissionMessenger);
+            onExecute.accept(permissionMessenger, args);
         return true;
     }
 
