@@ -19,21 +19,13 @@ public class FloorCommand implements Command {
     @NotNull
     private final String name, permission;
     @NotNull
-    private final List<String> alias;
-    @NotNull
     private final List<CommandTarget<?>> parameters;
     @Nullable
     private BiConsumer<PermissionMessenger, String[]> onExecute;
 
-    protected FloorCommand(List<String> args, PyramidCommand pyramid) {
-        this(args, pyramid, new ArrayList<>());
-    }
-
-    protected FloorCommand(List<String> args, PyramidCommand pyramid,
-                           List<String> alias) {
+    protected FloorCommand(@NotNull List<String> args, PyramidCommand pyramid) {
         this.args = args;
         this.pyramid = pyramid;
-        this.alias = alias;
         this.parameters = new ArrayList<>();
         this.name = String.join(" ", args).toLowerCase();
         String parentPermission = pyramid.getPermission();
@@ -86,11 +78,6 @@ public class FloorCommand implements Command {
     }
 
     @NotNull
-    public List<String> getAlias() {
-        return alias;
-    }
-
-    @NotNull
     public String getPermission() {
         return permission;
     }
@@ -110,7 +97,6 @@ public class FloorCommand implements Command {
     public String toString() {
         return "{pyramid=" + this.pyramid.getName() +
                 ", name=" + this.name +
-                ", alias=" + this.alias +
                 ", permission=" + this.permission +
                 ", description=" + this.pyramid.getDescription() +
                 "}";

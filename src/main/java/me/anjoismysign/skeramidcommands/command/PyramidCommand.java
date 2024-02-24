@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -16,8 +17,6 @@ public class PyramidCommand implements Command {
     @NotNull
     private final String name, permission, description;
     @NotNull
-    private final List<String> alias;
-    @NotNull
     private final List<FloorCommand> children;
     @NotNull
     private final List<CommandTarget<?>> parameters;
@@ -26,20 +25,12 @@ public class PyramidCommand implements Command {
 
     public PyramidCommand(@NotNull String name,
                           @NotNull String permission,
-                          @NotNull String description,
-                          @NotNull List<String> alias) {
+                          @NotNull String description) {
         this.name = name;
-        this.alias = alias;
         this.permission = permission;
         this.description = description;
         this.parameters = new ArrayList<>();
         this.children = new ArrayList<>();
-    }
-
-    public PyramidCommand(@NotNull String name,
-                          @NotNull String permission,
-                          @NotNull String description) {
-        this(name, permission, description, new ArrayList<>());
     }
 
     @Nullable
@@ -62,14 +53,36 @@ public class PyramidCommand implements Command {
                 .collect(Collectors.toList());
         if (!single.isEmpty())
             return single;
-        int argumentSize = dupe.size();
-        Command find = child(dupe.get(0));
-        if (!find.hasParameters() || find.getParameters().size() < argumentSize)
+        Command find = findParameterizedChildren(prefix);
+        if (find == null)
+            return new ArrayList<>();
+        String commandName = find.getName();
+        String[] subArgs = prefix.replace(commandName, "").split(" ");
+        int argumentSize = subArgs.length;
+        if (find.getParameters().size() < argumentSize)
             return new ArrayList<>();
         CommandTarget<?> result = find.getParameters().get(argumentSize - 1);
         if (result != null)
             return result.get();
         return new ArrayList<>();
+    }
+
+    @Nullable
+    private Command findParameterizedChildren(String input) {
+        String[] split = input.split(" ");
+        Command children = getChildren()
+                .stream()
+                .filter(child -> child.getName().equals(input))
+                .filter(Command::hasParameters)
+                .findFirst().orElse(null);
+        if (children == null) {
+            if (split.length == 1)
+                return null;
+            String[] newArray = Arrays.copyOf(split, split.length - 1);
+            String newString = String.join(" ", newArray);
+            return findParameterizedChildren(newString);
+        }
+        return children;
     }
 
     public final boolean execute(PermissionMessenger permissionMessenger, List<String> args) {
@@ -78,15 +91,16 @@ public class PyramidCommand implements Command {
             run(permissionMessenger);
             return true;
         }
-        Command argument = findChildren(String.join(" ", args).toLowerCase());
-        if (argument == null)
+        String prefix = String.join(" ", args).toLowerCase();
+        Command find = findChildren(prefix);
+        if (find == null)
             return false;
-        if (argument.hasParameters()) {
-            List<String> subList = args.subList(1, args.size());
-            String[] array = subList.toArray(new String[0]);
-            return argument.run(permissionMessenger, array);
+        if (find.hasParameters()) {
+            String commandName = find.getName();
+            String[] subArgs = prefix.replace(commandName, "").trim().split(" ");
+            return find.run(permissionMessenger, subArgs);
         }
-        return argument.run(permissionMessenger);
+        return find.run(permissionMessenger);
     }
 
     public final void sendUsage(PermissionMessenger permissionMessenger) {
@@ -129,11 +143,6 @@ public class PyramidCommand implements Command {
     }
 
     @NotNull
-    public List<String> getAlias() {
-        return alias;
-    }
-
-    @NotNull
     public String getPermission() {
         return permission;
     }
@@ -151,13 +160,11 @@ public class PyramidCommand implements Command {
      */
     @Nullable
     public Command findChildren(String name) {
-        Command single = children.stream().filter(child -> child.getName().equals(name) ||
-                child.getAlias().contains(name)).findFirst().orElse(null);
+        Command single = children.stream().filter(child -> child.getName().equals(name))
+                .findFirst().orElse(null);
         if (single != null)
             return single;
-        String first = name.split(" ")[0];
-        return children.stream().filter(child -> child.getName().equals(first) ||
-                child.getAlias().contains(first)).findFirst().orElse(null);
+        return findParameterizedChildren(name);
     }
 
     @NotNull
@@ -168,7 +175,6 @@ public class PyramidCommand implements Command {
     @NotNull
     public String toString() {
         return "{name=" + this.name +
-                ", alias=" + this.alias +
                 ", permission=" + this.permission +
                 ", description=" + this.description +
                 "}";

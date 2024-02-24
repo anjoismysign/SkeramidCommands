@@ -64,14 +64,6 @@ public interface Command extends Skeramid<Command> {
     String getName();
 
     /**
-     * Gets the alias of the command.
-     *
-     * @return the alias.
-     */
-    @NotNull
-    List<String> getAlias();
-
-    /**
      * Gets the permission of the command.
      *
      * @return the permission.
@@ -94,32 +86,4 @@ public interface Command extends Skeramid<Command> {
      */
     @NotNull
     String toString();
-
-    /**
-     * Gets a child command by name and alias.
-     *
-     * @param name  the name.
-     * @param alias the alias.
-     * @return the child command.
-     */
-    default Command child(String name, List<String> alias) {
-        Command child = child(name);
-        child.getAlias().addAll(alias);
-        return child;
-    }
-
-    /**
-     * Gets a child command by name and alias.
-     *
-     * @param name  the name.
-     * @param alias the alias.
-     * @return the child command.
-     */
-    default Command child(String name, String... alias) {
-        Command child = child(name);
-        for (String s : alias) {
-            child.getAlias().add(s);
-        }
-        return child;
-    }
 }

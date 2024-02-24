@@ -5,16 +5,12 @@ import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class CommandBuilder {
     @NotNull
     private String name, permission, description;
-    @Nullable
-    private List<String> alias;
     @Nullable
     private BiConsumer<PermissionMessenger, String[]> onExecute;
 
@@ -52,21 +48,9 @@ public class CommandBuilder {
         return this;
     }
 
-    public CommandBuilder alias(@Nullable List<String> alias) {
-        this.alias = alias;
-        return this;
-    }
-
-    public CommandBuilder alias(String... alias) {
-        this.alias = Arrays.asList(alias);
-        return this;
-    }
-
     @NotNull
     public Command build() {
         Command command = SkeramidCommandsAPI.getInstance().createCommand(name, permission, description);
-        if (alias != null)
-            command.getAlias().addAll(alias);
         if (onExecute != null)
             command.onExecute(onExecute);
         return command;
