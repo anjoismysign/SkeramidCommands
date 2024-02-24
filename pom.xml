@@ -6,7 +6,7 @@
 
     <groupId>me.anjoismysign</groupId>
     <artifactId>skeramidcommands</artifactId>
-    <version>1.0</version>
+    <version>1.0.2</version>
     <name>SkeramidCommands</name>
 
     <build>
@@ -91,5 +91,20 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub anjoismysign Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/anjoismysign/SkeramidCommands</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:${project.scm.url}</connection>
+        <developerConnection>scm:git:${project.scm.url}</developerConnection>
+        <url>git@github.com:idhub-io/idhub-api.git</url>
+        <tag>HEAD</tag>
+    </scm>
 
 </project>

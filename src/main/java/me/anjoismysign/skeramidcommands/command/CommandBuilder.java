@@ -20,7 +20,7 @@ public class CommandBuilder {
 
     private CommandBuilder(@NotNull String name) {
         this.name = name;
-        this.permission = "";
+        this.permission = name;
         this.description = "";
     }
 
