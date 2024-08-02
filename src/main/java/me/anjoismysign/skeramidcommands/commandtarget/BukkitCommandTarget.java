@@ -33,6 +33,8 @@ public class BukkitCommandTarget {
 
             @Override
             public Player parse(String arg) {
+                if (arg.trim().isEmpty())
+                    return null;
                 return Bukkit.getPlayer(arg);
             }
         };
@@ -49,6 +51,8 @@ public class BukkitCommandTarget {
             @Nullable
             @Override
             public World parse(String arg) {
+                if (arg.trim().isEmpty())
+                    return null;
                 return Bukkit.getWorld(arg);
             }
         };

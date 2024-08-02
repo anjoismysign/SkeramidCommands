@@ -53,6 +53,14 @@ public class FloorCommand implements Command {
         Collections.addAll(parameters, targets);
     }
 
+    public @NotNull List<String> getUsage() {
+        return pyramid.getUsage();
+    }
+
+    public void addUsage(@NotNull String... usage) {
+        pyramid.addUsage();
+    }
+
     @Override
     public void onExecute(BiConsumer<PermissionMessenger, String[]> consumer) {
         this.onExecute = consumer;

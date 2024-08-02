@@ -25,6 +25,33 @@ public interface Command extends Skeramid<Command> {
     void setParameters(CommandTarget<?>... targets);
 
     /**
+     * Gets the usage of this command.
+     * Note: Usage is shared between PyramidCommand and FloorCommand
+     *
+     * @return the usage
+     */
+    @NotNull
+    List<String> getUsage();
+
+    /**
+     * Adds usage to this command
+     * Note: Usage is shared between PyramidCommand and FloorCommand
+     *
+     * @param usage the usage
+     */
+    void addUsage(@NotNull String... usage);
+
+    /**
+     * Adds usage to this command
+     * Note: Usage is shared between PyramidCommand and FloorCommand
+     *
+     * @param usage the usage
+     */
+    default void addUsage(@NotNull List<String> usage) {
+        addUsage(usage.toArray(new String[0]));
+    }
+
+    /**
      * Checks whether the command has parameters.
      *
      * @return true if the command has parameters, false otherwise.
