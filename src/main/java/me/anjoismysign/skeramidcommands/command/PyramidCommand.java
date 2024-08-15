@@ -5,10 +5,7 @@ import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -43,7 +40,7 @@ public class PyramidCommand implements Command {
         int size = args.size();
         List<String> dupe = new ArrayList<>(args);
         dupe.remove(dupe.size() - 1);
-        String prefix = String.join(" ", dupe).toLowerCase();
+        String prefix = String.join(" ", dupe).toLowerCase(Locale.ROOT);
         List<Command> children = getChildren()
                 .stream()
                 .filter(child -> child.getName().startsWith(prefix))
@@ -109,7 +106,7 @@ public class PyramidCommand implements Command {
             run(permissionMessenger);
             return true;
         }
-        String prefix = String.join(" ", args).toLowerCase();
+        String prefix = String.join(" ", args).toLowerCase(Locale.ROOT);
         Command find = findChildren(prefix);
         if (find == null) {
             if (getParameters().isEmpty())

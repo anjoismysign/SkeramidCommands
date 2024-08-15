@@ -5,10 +5,7 @@ import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class FloorCommand implements Command {
@@ -27,10 +24,10 @@ public class FloorCommand implements Command {
         this.args = args;
         this.pyramid = pyramid;
         this.parameters = new ArrayList<>();
-        this.name = String.join(" ", args).toLowerCase();
+        this.name = String.join(" ", args).toLowerCase(Locale.ROOT);
         String parentPermission = pyramid.getPermission();
         this.permission = parentPermission.isEmpty() ? "" : (pyramid.getPermission() + "." + String
-                .join(".", args)).toLowerCase();
+                .join(".", args)).toLowerCase(Locale.ROOT);
     }
 
     @NotNull
