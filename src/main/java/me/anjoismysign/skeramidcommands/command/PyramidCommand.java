@@ -1,18 +1,24 @@
 package me.anjoismysign.skeramidcommands.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
 public class PyramidCommand implements Command {
-
     @NotNull
-    private final String name, permission, description;
+    private final String name;
+    @NotNull
+    private final String permission;
+    @NotNull
+    private final String description;
     @NotNull
     private final List<FloorCommand> children;
     @NotNull
@@ -22,106 +28,112 @@ public class PyramidCommand implements Command {
     @Nullable
     private BiConsumer<PermissionMessenger, String[]> onExecute;
 
-    public PyramidCommand(@NotNull String name,
-                          @NotNull String permission,
-                          @NotNull String description) {
+    public PyramidCommand(@NotNull String name, @NotNull String permission, @NotNull String description) {
         this.name = name;
         this.permission = permission;
         this.description = description;
-        this.parameters = new ArrayList<>();
-        this.children = new ArrayList<>();
-        this.usage = new ArrayList<>();
+        parameters = new ArrayList<>();
+        children = new ArrayList<>();
+        usage = new ArrayList<>();
     }
 
     @Nullable
     public final List<String> tabComplete(PermissionMessenger permissionMessenger, List<String> args) {
-        if (args.isEmpty())
+        if (args.isEmpty()) {
             return null;
-        int size = args.size();
-        List<String> dupe = new ArrayList<>(args);
-        dupe.remove(dupe.size() - 1);
-        String prefix = String.join(" ", dupe).toLowerCase(Locale.ROOT);
-        List<Command> children = getChildren()
-                .stream()
-                .filter(child -> child.getName().startsWith(prefix))
-                .filter(child -> child.getName().split(" ").length == size)
-                .filter(child -> child.isAuthorized(permissionMessenger))
-                .collect(Collectors.toList());
-        List<String> single = children
-                .stream()
-                .map(child -> child.getName().split(" ")[size - 1])
-                .collect(Collectors.toList());
-        if (!single.isEmpty())
-            return single;
-        Command find = findParameterizedChildren(prefix);
-        if (find == null) {
-            int argumentSize;
-            if (prefix.trim().isEmpty()) {
-                argumentSize = 1;
+        } else {
+            int size = args.size();
+            List<String> dupe = new ArrayList<>(args);
+            dupe.remove(dupe.size() - 1);
+            String prefix = String.join(" ", dupe).toLowerCase(Locale.ROOT);
+            List<Command> children = getChildren()
+                    .stream()
+                    .filter(child -> child.getName().startsWith(prefix))
+                    .filter(child -> child.getName().split(" ").length == size)
+                    .filter(child -> child.isAuthorized(permissionMessenger))
+                    .collect(Collectors.toList());
+            List<String> single = children.stream().map(child -> child.getName().split(" ")[size - 1]).collect(Collectors.toList());
+            if (!single.isEmpty()) {
+                return single;
             } else {
-                String commandName = this.getName();
+                Command find = findParameterizedChildren(prefix);
+                if (find == null) {
+                    int argumentSize;
+                    if (prefix.trim().isEmpty()) {
+                        argumentSize = 1;
+                    } else {
+                        String commandName = getName();
+                        String[] subArgs = prefix.replace(commandName, "").split(" ");
+                        argumentSize = subArgs.length + 1;
+                    }
+
+                    if (getParameters().size() < argumentSize) {
+                        return new ArrayList<>();
+                    }
+
+                    CommandTarget<?> result = getParameters().get(argumentSize - 1);
+                    if (result != null) {
+                        return result.get();
+                    }
+                }
+
+                String commandName = find.getName();
                 String[] subArgs = prefix.replace(commandName, "").split(" ");
-                argumentSize = subArgs.length + 1;
+                int argumentSizex = subArgs.length;
+                if (find.getParameters().size() < argumentSizex) {
+                    return new ArrayList<>();
+                } else {
+                    CommandTarget<?> result = find.getParameters().get(argumentSizex - 1);
+                    return (List<String>)(result != null ? result.get() : new ArrayList<>());
+                }
             }
-            if (this.getParameters().size() < argumentSize)
-                return new ArrayList<>();
-            CommandTarget<?> result = this.getParameters().get(argumentSize - 1);
-            if (result != null)
-                return result.get();
         }
-        String commandName = find.getName();
-        String[] subArgs = prefix.replace(commandName, "").split(" ");
-        int argumentSize = subArgs.length;
-        if (find.getParameters().size() < argumentSize)
-            return new ArrayList<>();
-        CommandTarget<?> result = find.getParameters().get(argumentSize - 1);
-        if (result != null)
-            return result.get();
-        return new ArrayList<>();
     }
 
     @Nullable
     private Command findParameterizedChildren(String input) {
         String[] split = input.split(" ");
-        Command children = getChildren()
-                .stream()
-                .filter(child -> child.getName().equals(input))
-                .filter(Command::hasParameters)
-                .findFirst().orElse(null);
+        Command children = getChildren().stream().filter(child -> child.getName().equals(input)).filter(Command::hasParameters).findFirst().orElse(null);
         if (children == null) {
-            if (split.length == 1)
+            if (split.length == 1) {
                 return null;
-            String[] newArray = Arrays.copyOf(split, split.length - 1);
-            String newString = String.join(" ", newArray);
-            return findParameterizedChildren(newString);
+            } else {
+                String[] newArray = Arrays.copyOf(split, split.length - 1);
+                String newString = String.join(" ", newArray);
+                return findParameterizedChildren(newString);
+            }
+        } else {
+            return children;
         }
-        return children;
     }
 
     public final boolean execute(PermissionMessenger permissionMessenger, List<String> args) {
         if (args.isEmpty()) {
             sendUsage(permissionMessenger);
-            if (hasParameters())
-                return true;
-            run(permissionMessenger);
+            if (!hasParameters()) {
+                run(permissionMessenger);
+            }
             return true;
+        } else {
+            String suffix = String.join(" ", args);
+            Command find = findChildren(suffix);
+            if (find == null) {
+                if (getParameters().isEmpty()) {
+                    return false;
+                } else {
+                    String commandName = getName();
+                    String[] subArgs = suffix.replace(commandName, "").trim().split(" ");
+                    run(permissionMessenger, subArgs);
+                    return true;
+                }
+            } else if (find.hasParameters()) {
+                String commandName = find.getName();
+                String[] subArgs = suffix.replace(commandName, "").trim().split(" ");
+                return find.run(permissionMessenger, subArgs);
+            } else {
+                return find.run(permissionMessenger);
+            }
         }
-        String prefix = String.join(" ", args).toLowerCase(Locale.ROOT);
-        Command find = findChildren(prefix);
-        if (find == null) {
-            if (getParameters().isEmpty())
-                return false;
-            String commandName = this.getName();
-            String[] subArgs = prefix.replace(commandName, "").trim().split(" ");
-            run(permissionMessenger, subArgs);
-            return true;
-        }
-        if (find.hasParameters()) {
-            String commandName = find.getName();
-            String[] subArgs = prefix.replace(commandName, "").trim().split(" ");
-            return find.run(permissionMessenger, subArgs);
-        }
-        return find.run(permissionMessenger);
     }
 
     public final void sendUsage(PermissionMessenger permissionMessenger) {
@@ -129,76 +141,84 @@ public class PyramidCommand implements Command {
         permissionMessenger.sendMessage(String.format("%s | Help", command));
         getUsage().forEach(permissionMessenger::sendMessage);
         List<FloorCommand> children = getChildren();
-        if (children.isEmpty())
-            return;
-        permissionMessenger.sendMessage("");
-        for (Command argument : getChildren()) {
-            permissionMessenger.sendMessage(String.format("/%s %s - %s", command, argument.getName(), argument.getDescription()));
+        if (!children.isEmpty()) {
+            permissionMessenger.sendMessage("");
+
+            for (Command argument : getChildren()) {
+                permissionMessenger.sendMessage(String.format("/%s %s - %s", command, argument.getName(), argument.getDescription()));
+            }
         }
     }
 
+    @Override
     public void onExecute(BiConsumer<PermissionMessenger, String[]> consumer) {
-        this.onExecute = consumer;
+        onExecute = consumer;
     }
 
-    public @NotNull List<CommandTarget<?>> getParameters() {
+    @NotNull
+    @Override
+    public List<CommandTarget<?>> getParameters() {
         return parameters;
     }
 
+    @Override
     public void setParameters(CommandTarget<?>... targets) {
         parameters.clear();
         Collections.addAll(parameters, targets);
     }
 
     @NotNull
+    @Override
     public List<String> getUsage() {
         return Collections.unmodifiableList(usage);
     }
 
+    @Override
     public void addUsage(@NotNull String... usage) {
         this.usage.addAll(Arrays.asList(usage));
     }
 
+    @Override
     public boolean run(PermissionMessenger permissionMessenger, String... args) {
-        if (!isAuthorized(permissionMessenger))
+        if (!isAuthorized(permissionMessenger)) {
             return false;
-        if (onExecute != null)
-            onExecute.accept(permissionMessenger, args);
-        return true;
+        } else {
+            if (onExecute != null) {
+                onExecute.accept(permissionMessenger, args);
+            }
+
+            return true;
+        }
     }
 
+    @Override
     public final boolean isAuthorized(PermissionMessenger permissionMessenger) {
-        return permission.isEmpty() || permissionMessenger.hasPermission(this.permission);
+        return permission.isEmpty() || permissionMessenger.hasPermission(permission);
     }
 
     @NotNull
+    @Override
     public String getName() {
         return name;
     }
 
     @NotNull
+    @Override
     public String getPermission() {
         return permission;
     }
 
     @NotNull
+    @Override
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Finds a child by either name or alias.
-     *
-     * @param name the name or alias.
-     * @return the child. Null if not found.
-     */
     @Nullable
     public Command findChildren(String name) {
-        Command single = children.stream().filter(child -> child.getName().equals(name))
-                .findFirst().orElse(null);
-        if (single != null)
-            return single;
-        return findParameterizedChildren(name);
+        String lowerCased = name.toLowerCase(Locale.ROOT);
+        Command single = children.stream().filter(child -> child.getName().equals(lowerCased)).findFirst().orElse(null);
+        return single != null ? single : findParameterizedChildren(lowerCased);
     }
 
     @NotNull
@@ -207,11 +227,9 @@ public class PyramidCommand implements Command {
     }
 
     @NotNull
+    @Override
     public String toString() {
-        return "{name=" + this.name +
-                ", permission=" + this.permission +
-                ", description=" + this.description +
-                "}";
+        return "{name=" + name + ", permission=" + permission + ", description=" + description + "}";
     }
 
     @NotNull
@@ -225,12 +243,15 @@ public class PyramidCommand implements Command {
         args.add(name);
         Command children = findChildren(name);
         if (children == null) {
-            if (hasParameters())
+            if (hasParameters()) {
                 throw ChildNotAllowedException.of(this, name);
-            FloorCommand floorCommand = new FloorCommand(args, this);
-            this.children.add(floorCommand);
-            return floorCommand;
+            } else {
+                FloorCommand floorCommand = new FloorCommand(args, this);
+                this.children.add(floorCommand);
+                return floorCommand;
+            }
+        } else {
+            return children;
         }
-        return children;
     }
 }
