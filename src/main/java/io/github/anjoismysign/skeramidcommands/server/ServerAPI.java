@@ -1,4 +1,4 @@
-package me.anjoismysign.skeramidcommands.server;
+package io.github.anjoismysign.skeramidcommands.server;
 
 public enum ServerAPI {
     BUKKIT("org.bukkit.command.CommandSender"),

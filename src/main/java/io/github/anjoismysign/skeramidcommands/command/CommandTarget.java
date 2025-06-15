@@ -1,4 +1,4 @@
-package me.anjoismysign.skeramidcommands.command;
+package io.github.anjoismysign.skeramidcommands.command;
 
 import org.jetbrains.annotations.Nullable;
 

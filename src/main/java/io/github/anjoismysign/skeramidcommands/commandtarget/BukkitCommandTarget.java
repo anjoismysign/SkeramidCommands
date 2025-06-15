@@ -1,8 +1,8 @@
-package me.anjoismysign.skeramidcommands.commandtarget;
+package io.github.anjoismysign.skeramidcommands.commandtarget;
 
-import me.anjoismysign.skeramidcommands.command.CommandTarget;
-import org.bukkit.*;
-import org.bukkit.entity.EntityType;
+import io.github.anjoismysign.skeramidcommands.command.CommandTarget;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 

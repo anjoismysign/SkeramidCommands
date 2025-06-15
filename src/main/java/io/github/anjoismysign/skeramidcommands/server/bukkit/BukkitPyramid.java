@@ -1,8 +1,12 @@
-package me.anjoismysign.skeramidcommands.server.bukkit;
+package io.github.anjoismysign.skeramidcommands.server.bukkit;
 
-import me.anjoismysign.skeramidcommands.command.PyramidCommand;
+import io.github.anjoismysign.skeramidcommands.command.PyramidCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,9 +1,9 @@
-package me.anjoismysign.skeramidcommands.server.bukkit;
+package io.github.anjoismysign.skeramidcommands.server.bukkit;
 
-import me.anjoismysign.skeramidcommands.command.Command;
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
-import me.anjoismysign.skeramidcommands.server.ServerAPI;
-import me.anjoismysign.skeramidcommands.server.ServerAdapter;
+import io.github.anjoismysign.skeramidcommands.command.Command;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.server.ServerAPI;
+import io.github.anjoismysign.skeramidcommands.server.ServerAdapter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

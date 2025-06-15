@@ -1,6 +1,6 @@
-package me.anjoismysign.skeramidcommands.server;
+package io.github.anjoismysign.skeramidcommands.server;
 
-import me.anjoismysign.skeramidcommands.command.Command;
+import io.github.anjoismysign.skeramidcommands.command.Command;
 import org.jetbrains.annotations.NotNull;
 
 public interface ServerAdapter<T> {

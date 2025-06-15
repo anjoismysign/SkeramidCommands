@@ -1,9 +1,9 @@
-package me.anjoismysign.skeramidcommands.server.sponge;
+package io.github.anjoismysign.skeramidcommands.server.sponge;
 
-import me.anjoismysign.skeramidcommands.command.Command;
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
-import me.anjoismysign.skeramidcommands.server.ServerAPI;
-import me.anjoismysign.skeramidcommands.server.ServerAdapter;
+import io.github.anjoismysign.skeramidcommands.command.Command;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.server.ServerAPI;
+import io.github.anjoismysign.skeramidcommands.server.ServerAdapter;
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.service.permission.Subject;

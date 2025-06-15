@@ -1,4 +1,9 @@
-package me.anjoismysign.skeramidcommands.command;
+package io.github.anjoismysign.skeramidcommands.command;
+
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,10 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
-import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PyramidCommand implements Command {
     @NotNull

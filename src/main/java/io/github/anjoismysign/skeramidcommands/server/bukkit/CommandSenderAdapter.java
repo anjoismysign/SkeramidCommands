@@ -1,6 +1,6 @@
-package me.anjoismysign.skeramidcommands.server.bukkit;
+package io.github.anjoismysign.skeramidcommands.server.bukkit;
 
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import org.bukkit.command.CommandSender;
 
 public class CommandSenderAdapter implements PermissionMessenger {

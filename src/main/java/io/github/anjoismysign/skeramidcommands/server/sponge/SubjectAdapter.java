@@ -1,6 +1,6 @@
-package me.anjoismysign.skeramidcommands.server.sponge;
+package io.github.anjoismysign.skeramidcommands.server.sponge;
 
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.spongepowered.api.service.permission.Subject;

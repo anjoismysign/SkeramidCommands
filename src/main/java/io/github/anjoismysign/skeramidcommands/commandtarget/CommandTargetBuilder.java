@@ -1,8 +1,8 @@
-package me.anjoismysign.skeramidcommands.commandtarget;
+package io.github.anjoismysign.skeramidcommands.commandtarget;
 
+import io.github.anjoismysign.skeramidcommands.command.CommandTarget;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
-import me.anjoismysign.skeramidcommands.command.CommandTarget;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;

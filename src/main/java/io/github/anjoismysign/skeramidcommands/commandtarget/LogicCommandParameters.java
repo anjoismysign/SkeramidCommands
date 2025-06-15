@@ -1,6 +1,6 @@
-package me.anjoismysign.skeramidcommands.commandtarget;
+package io.github.anjoismysign.skeramidcommands.commandtarget;
 
-import me.anjoismysign.skeramidcommands.command.CommandTarget;
+import io.github.anjoismysign.skeramidcommands.command.CommandTarget;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;

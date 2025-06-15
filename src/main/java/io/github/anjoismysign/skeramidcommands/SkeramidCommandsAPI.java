@@ -1,11 +1,11 @@
-package me.anjoismysign.skeramidcommands;
+package io.github.anjoismysign.skeramidcommands;
 
-import me.anjoismysign.skeramidcommands.command.Command;
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
-import me.anjoismysign.skeramidcommands.server.ServerAPI;
-import me.anjoismysign.skeramidcommands.server.ServerAdapter;
-import me.anjoismysign.skeramidcommands.server.bukkit.BukkitAdapter;
-import me.anjoismysign.skeramidcommands.server.sponge.SpongeAdapter;
+import io.github.anjoismysign.skeramidcommands.command.Command;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.server.ServerAPI;
+import io.github.anjoismysign.skeramidcommands.server.ServerAdapter;
+import io.github.anjoismysign.skeramidcommands.server.bukkit.BukkitAdapter;
+import io.github.anjoismysign.skeramidcommands.server.sponge.SpongeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 public class SkeramidCommandsAPI {

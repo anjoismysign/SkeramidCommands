@@ -1,11 +1,15 @@
-package me.anjoismysign.skeramidcommands.command;
+package io.github.anjoismysign.skeramidcommands.command;
 
-import me.anjoismysign.skeramidcommands.server.PermissionMessenger;
-import me.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
+import io.github.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class FloorCommand implements Command {

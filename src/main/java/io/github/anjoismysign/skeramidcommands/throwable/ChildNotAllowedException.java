@@ -1,6 +1,6 @@
-package me.anjoismysign.skeramidcommands.throwable;
+package io.github.anjoismysign.skeramidcommands.throwable;
 
-import me.anjoismysign.skeramidcommands.command.Command;
+import io.github.anjoismysign.skeramidcommands.command.Command;
 
 public class ChildNotAllowedException extends RuntimeException {
 
