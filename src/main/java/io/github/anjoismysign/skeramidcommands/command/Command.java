@@ -1,7 +1,7 @@
 package io.github.anjoismysign.skeramidcommands.command;
 
 import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
-import me.anjoismysign.skeramid.Skeramid;
+import io.github.anjoismysign.skeramid.Skeramid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

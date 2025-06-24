@@ -79,7 +79,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.anjoismysign</groupId>
+            <groupId>io.github.anjoismysign</groupId>
             <artifactId>skeramid</artifactId>
             <version>1.0.1</version>
             <scope>compile</scope>
