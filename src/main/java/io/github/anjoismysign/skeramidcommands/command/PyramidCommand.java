@@ -110,9 +110,10 @@ public class PyramidCommand implements Command {
 
     public final boolean execute(PermissionMessenger permissionMessenger, List<String> args) {
         if (args.isEmpty()) {
-            sendUsage(permissionMessenger);
             if (!hasParameters()) {
                 run(permissionMessenger);
+            } else {
+                sendUsage(permissionMessenger);
             }
             return true;
         } else {
