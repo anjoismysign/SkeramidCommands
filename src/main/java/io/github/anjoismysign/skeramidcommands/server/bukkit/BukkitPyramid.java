@@ -26,7 +26,7 @@ public class BukkitPyramid implements CommandExecutor, TabCompleter {
     public static BukkitPyramid ofBukkitCommand(@NotNull String name) {
         PluginCommand pluginCommand = Objects.requireNonNull(Bukkit.getPluginCommand(name),
                 "Command '" + name + "' is not registered in plugin.yml");
-        String permission = pluginCommand.getPermission() == null ? "" : pluginCommand.getPermission();
+        String permission = pluginCommand.getPermission() == null ? name : pluginCommand.getPermission();
         return of(name, permission, pluginCommand.getDescription());
     }
 
@@ -34,7 +34,9 @@ public class BukkitPyramid implements CommandExecutor, TabCompleter {
     public static BukkitPyramid of(@NotNull String name,
                                    @NotNull String permission,
                                    @NotNull String description) {
+        description = description.isEmpty() ? "Base '/"+name+"' command" : description;
         PyramidCommand command = new PyramidCommand(name, permission, description);
+        BukkitAdapter.getInstance().registerPermission(permission, description);
         BukkitPyramid pyramid = new BukkitPyramid(command);
         String commandName = command.getName();
         PluginCommand pluginCommand = Objects.requireNonNull(Bukkit.getPluginCommand(commandName),

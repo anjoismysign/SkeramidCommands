@@ -1,5 +1,6 @@
 package io.github.anjoismysign.skeramidcommands.command;
 
+import io.github.anjoismysign.skeramidcommands.SkeramidCommandsAPI;
 import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import io.github.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
@@ -18,30 +19,36 @@ public class FloorCommand implements Command {
     @NotNull
     private final PyramidCommand pyramid;
     @NotNull
-    private final String name, permission;
+    private final String name, permission, description;
     @NotNull
     private final List<CommandTarget<?>> parameters;
     @Nullable
     private BiConsumer<PermissionMessenger, String[]> onExecute;
 
-    protected FloorCommand(@NotNull List<String> args, PyramidCommand pyramid) {
+    protected FloorCommand(@NotNull List<String> args, PyramidCommand pyramid, @Nullable String description) {
         this.args = args;
         this.pyramid = pyramid;
         this.parameters = new ArrayList<>();
         this.name = String.join(" ", args).toLowerCase(Locale.ROOT);
+        this.description = description == null ? "/"+pyramid.getName()+" "+String.join(" ", args).toLowerCase(Locale.ROOT) : description;
         String parentPermission = pyramid.getPermission();
         this.permission = parentPermission.isEmpty() ? "" : (pyramid.getPermission() + "." + String
                 .join(".", args)).toLowerCase(Locale.ROOT);
     }
 
     @NotNull
-    public Command child(String name) {
-        if (hasParameters())
+    public Command child(@NotNull String name, @Nullable String description) {
+        if (hasParameters()) {
             throw ChildNotAllowedException.of(this, name);
+        }
         List<String> dupe = new ArrayList<>(args);
         dupe.add(name);
-        FloorCommand command = new FloorCommand(dupe, pyramid);
+        FloorCommand command = new FloorCommand(dupe, pyramid, description);
         pyramid.getChildren().add(command);
+        SkeramidCommandsAPI.getInstance().registerPermission(
+                command.getPermission(),
+                command.getDescription()
+        );
         return command;
     }
 
@@ -93,7 +100,7 @@ public class FloorCommand implements Command {
 
     @NotNull
     public String getDescription() {
-        return pyramid.getDescription();
+        return description;
     }
 
     @NotNull
@@ -107,7 +114,7 @@ public class FloorCommand implements Command {
         return "{pyramid=" + this.pyramid.getName() +
                 ", name=" + this.name +
                 ", permission=" + this.permission +
-                ", description=" + this.pyramid.getDescription() +
+                ", description=" + this.description +
                 "}";
     }
 }

@@ -1,5 +1,6 @@
 package io.github.anjoismysign.skeramidcommands.command;
 
+import io.github.anjoismysign.skeramidcommands.SkeramidCommandsAPI;
 import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import io.github.anjoismysign.skeramidcommands.throwable.ChildNotAllowedException;
 import org.jetbrains.annotations.NotNull;
@@ -240,16 +241,19 @@ public class PyramidCommand implements Command {
     }
 
     @NotNull
-    public Command child(String name) {
-        List<String> args = new ArrayList<>();
-        args.add(name);
+    public Command child(@NotNull String name,
+                         @Nullable String description) {
         Command children = findChildren(name);
         if (children == null) {
             if (hasParameters()) {
                 throw ChildNotAllowedException.of(this, name);
             } else {
-                FloorCommand floorCommand = new FloorCommand(args, this);
+                FloorCommand floorCommand = new FloorCommand(List.of(name), this, description);
                 this.children.add(floorCommand);
+                SkeramidCommandsAPI.getInstance().registerPermission(
+                        floorCommand.getPermission(),
+                        floorCommand.getDescription()
+                );
                 return floorCommand;
             }
         } else {

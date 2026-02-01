@@ -1,13 +1,24 @@
 package io.github.anjoismysign.skeramidcommands.command;
 
-import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import io.github.anjoismysign.skeramid.Skeramid;
+import io.github.anjoismysign.skeramidcommands.server.PermissionMessenger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
 public interface Command extends Skeramid<Command> {
+
+    @NotNull
+    Command child(@NotNull String name,
+                  @Nullable String description);
+
+    @Override
+    @NotNull
+    default Command child(@NotNull String name){
+        return child(name, null);
+    }
 
     /**
      * Gets the parameters of the command.

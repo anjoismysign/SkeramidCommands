@@ -1,17 +1,10 @@
 package io.github.anjoismysign.skeramidcommands.commandtarget;
 
 import io.github.anjoismysign.skeramidcommands.command.CommandTarget;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
-import org.bukkit.Keyed;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class CommandTargetBuilder {

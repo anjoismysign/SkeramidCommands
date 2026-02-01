@@ -54,5 +54,8 @@ public class BukkitAdapter implements ServerAdapter<CommandSender> {
         return BukkitPyramid.ofBukkitCommand(name).getPyramid();
     }
 
-
+    @Override
+    public void registerPermission(@NotNull String permission, @NotNull String description) {
+        BukkitPermissionRegistry.register(permission, description);
+    }
 }

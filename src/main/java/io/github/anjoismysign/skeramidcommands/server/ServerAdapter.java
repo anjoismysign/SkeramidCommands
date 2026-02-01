@@ -40,4 +40,12 @@ public interface ServerAdapter<T> {
      */
     @NotNull
     Command createCommand(@NotNull String name, @NotNull String permission, @NotNull String description);
+
+    /**
+     * Registers a permission in the server's permission manager.
+     *
+     * @param permission  the permission string.
+     * @param description the description.
+     */
+    void registerPermission(@NotNull String permission, @NotNull String description);
 }

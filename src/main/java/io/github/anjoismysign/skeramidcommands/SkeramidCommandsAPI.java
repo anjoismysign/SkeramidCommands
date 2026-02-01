@@ -79,4 +79,10 @@ public class SkeramidCommandsAPI {
             throw new IllegalStateException("No adapter found for current server software!");
         return serverAdapter.createCommand(name, permission, description);
     }
+
+    public void registerPermission(@NotNull String permission, @NotNull String description) {
+        if (hasAdapter()) {
+            serverAdapter.registerPermission(permission, description);
+        }
+    }
 }

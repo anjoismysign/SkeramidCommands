@@ -55,4 +55,8 @@ public class SpongeAdapter implements ServerAdapter<Subject> {
     public Command createCommand(@NotNull String name, @NotNull String permission, @NotNull String description) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
+
+    @Override
+    public void registerPermission(@NotNull String permission, @NotNull String description) {
+    }
 }
