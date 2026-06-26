@@ -95,8 +95,7 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>GitHub anjoismysign Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/anjoismysign/SkeramidCommands</url>
+            <url>https://maven.pkg.github.com/anjoismysign/${artifactId}</url>
         </repository>
     </distributionManagement>
 
